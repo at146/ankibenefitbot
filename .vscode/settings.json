@@ -1,0 +1,12 @@
+{
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "aiogram",
+            "depth": 4
+        },
+        {
+            "name": "aiogram_dialog",
+            "depth": 4
+        }
+    ]
+}
