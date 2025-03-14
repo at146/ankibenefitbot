@@ -1,0 +1,10 @@
+services:
+  bot:
+    container_name: ankibenefitbot
+    network_mode: "host"
+    build: .
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - /root/logs-ankibenefitbot/:/app/logs
