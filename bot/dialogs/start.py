@@ -22,8 +22,8 @@ async def bot_start(
         user_db = await users_db.insert_user(
             event_from_user.id,
             event_from_user.first_name,
-            event_from_user.last_name,
             event_from_user.username,
+            event_from_user.last_name,
             db_session,
         )
 
