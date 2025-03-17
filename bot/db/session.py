@@ -10,3 +10,6 @@ def setup_db_session() -> async_sessionmaker[AsyncSession]:
         connect_args={"server_settings": {"application_name": settings.ENVIRONMENT}},
     )
     return async_sessionmaker(bind=async_engine, expire_on_commit=False, autoflush=False)
+
+
+db_session = setup_db_session()
