@@ -13,7 +13,7 @@ from aiohttp import web
 from aiohttp.web_app import Application
 
 from bot.core.config import settings
-from bot.db.session import setup_db_session
+from bot.db.session import db_session
 from bot.dialogs import include_dialogs, start
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
 from bot.init import bot, log, scheduler
@@ -23,7 +23,6 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
     dispatcher: Dispatcher = app["main_dp"]
 
     # Создание Engine для db
-    db_session = setup_db_session()
     dispatcher["db_session"] = db_session
 
     scheduler.start()
