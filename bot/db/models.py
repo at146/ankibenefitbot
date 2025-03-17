@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import BIGINT, ForeignKey, MetaData
+from sqlalchemy import BIGINT, ForeignKey, MetaData, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -24,6 +24,8 @@ class User(Base):
     first_name: Mapped[str]
     last_name: Mapped[str | None]
     username: Mapped[str | None]
+    is_clicked_channel: Mapped[bool] = mapped_column(server_default=text("false"))
+    is_clicked_article: Mapped[bool] = mapped_column(server_default=text("false"))
 
 
 class AnswerQuestions(Base):
