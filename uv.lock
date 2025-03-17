@@ -1,5 +1,4 @@
 version = 1
-revision = 1
 requires-python = ">=3.12"
 
 [[package]]
@@ -151,7 +150,7 @@ dev = [
 requires-dist = [
     { name = "aiogram", specifier = ">=3.18.0,<3.19.0" },
     { name = "aiogram-dialog", specifier = ">=2.3.1,<2.4.0" },
-    { name = "alembic", specifier = ">=1.15.1" },
+    { name = "alembic", specifier = ">=1.15.1,<1.16.0" },
     { name = "apscheduler", specifier = ">=3.11.0,<3.12.0" },
     { name = "pydantic-settings", specifier = ">=2.8.1,<2.9.0" },
     { name = "sqlalchemy", extras = ["postgresql-asyncpg"], specifier = ">=2.0.39,<2.1.0" },
