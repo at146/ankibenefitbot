@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from bot.crud.answers_questions_db import insert_answers_questions
 from bot.dialogs.menu.result_questioning.states import ResultMenu
 
-from .text import DICT_QUESTIONS
+from .text import DICT_QUESTIONS, LAST_QUESTION
 
 
 async def question_clicked(
@@ -16,21 +16,26 @@ async def question_clicked(
     manager: DialogManager,
     item_id: str,
 ) -> None:
-    # select.widget_id - номер вопроса
     if select.widget_id is None:
         raise ValueError("Select Widget ID is None")
 
-    manager.dialog_data[select.widget_id] = DICT_QUESTIONS[select.widget_id]["variants"][int(item_id) - 1]
+    if select.widget_id == "last":
+        manager.dialog_data[select.widget_id] = LAST_QUESTION["variants"][int(item_id) - 1]
+    else:
+        manager.dialog_data[select.widget_id] = DICT_QUESTIONS[select.widget_id]["variants"][int(item_id) - 1]
 
     # Вопросы кончились
-    if select.widget_id == str(len(DICT_QUESTIONS)):
+    if select.widget_id == "last":
         # await manager.done()
         event_from_user: User = manager.middleware_data["event_from_user"]
         db_session: async_sessionmaker[AsyncSession] = manager.middleware_data["db_session"]
 
         result = {}
         for key, value in manager.dialog_data.items():
-            result[DICT_QUESTIONS[key]["question"]] = value
+            if key == "last":
+                result[LAST_QUESTION["question"]] = value
+            else:
+                result[DICT_QUESTIONS[key]["question"]] = value
 
         await insert_answers_questions(event_from_user.id, str(result), db_session)
         await manager.start(
@@ -43,25 +48,3 @@ async def question_clicked(
         )
     else:
         await manager.next()
-
-
-# async def def_on_close(
-#     callback: ChatEvent,
-#     manager: DialogManager,
-# ):
-#     pass
-
-# async def on_start(
-#     callback: ChatEvent,
-#     manager: DialogManager,
-# ):
-#     pass
-
-
-# async def process_result(
-#     start_data: Data,
-#     result: Any,
-#     manager: DialogManager,
-# ):
-#     if result:
-#         manager.dialog_data["name"] = result["name"]

@@ -1,12 +1,12 @@
 from aiogram.fsm.state import State
 from aiogram.utils.text_decorations import html_decoration
 from aiogram_dialog import Window
-from aiogram_dialog.widgets.kbd import Group, Select
+from aiogram_dialog.widgets.kbd import Column, Group, Select
 from aiogram_dialog.widgets.text import Const, Format
 
 from .callbacks import question_clicked
 from .states import QuestioningMenu
-from .text import DICT_QUESTIONS
+from .text import DICT_QUESTIONS, LAST_QUESTION
 
 
 def choose_state(number_question: str) -> State:
@@ -57,4 +57,21 @@ def generate_menu() -> list[Window]:
                 state=choose_state(number_question),
             )
         )
+
+    list_of_windows.append(
+        Window(
+            Const(LAST_QUESTION["question"]),  # type: ignore
+            Column(
+                Select(
+                    Format("{item}"),
+                    items=LAST_QUESTION["variants"],
+                    item_id_getter=lambda x: LAST_QUESTION["variants"].index(x) + 1,
+                    id="last",
+                    on_click=question_clicked,
+                ),
+            ),
+            state=QuestioningMenu.select_last_menu,
+        )
+    )
+
     return list_of_windows
