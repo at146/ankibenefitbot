@@ -45,8 +45,8 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-    ARTICLE_URL: str
-    CHANNEL_URL: str
+    ARTICLE_REDIRECT_URL: str
+    CHANNEL_REDIRECT_URL: str
 
     USE_REDIS: bool
     REDIS_USER: str

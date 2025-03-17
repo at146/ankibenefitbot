@@ -5,7 +5,7 @@ from apscheduler.triggers.date import DateTrigger
 
 from bot.init import bot, scheduler
 
-from .keyboards import article_kb, article_last_kb
+from .keyboards import article_kb
 from .text import TEXT_AFTER_23_HOURS, get_after_5_minutes_text
 
 
@@ -31,7 +31,7 @@ async def change_message_after_5_minutes(chat_id: int, message_id: int, first_na
     last_message = await bot.send_message(
         chat_id=chat_id,
         text=get_after_5_minutes_text(first_name),
-        reply_markup=article_kb(),
+        reply_markup=article_kb(chat_id, "Получить статью сейчас"),
     )
     # TODO: для локальной разработки меньше поставить тригер
     trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(hours=23))
@@ -50,5 +50,5 @@ async def change_message_after_23_hours(chat_id: int, message_id: int) -> None:
     await bot.send_message(
         chat_id=chat_id,
         text=TEXT_AFTER_23_HOURS,
-        reply_markup=article_last_kb(),
+        reply_markup=article_kb(chat_id, "Забрать статью"),
     )

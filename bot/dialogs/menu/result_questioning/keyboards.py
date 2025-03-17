@@ -1,14 +1,11 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from bot.core.config import settings
 
-def article_kb() -> InlineKeyboardMarkup:
+
+def article_kb(user_id: int, text: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Получить статью сейчас", url="https://127.0.0.1")
-    return builder.as_markup()
-
-
-def article_last_kb() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    builder.button(text="Забрать статью", url="https://127.0.0.1")
+    builder.button(text=text, url=settings.ARTICLE_REDIRECT_URL.format(user_id=user_id))
+    builder.button(text="Получить статью сейчас", url=settings.ARTICLE_REDIRECT_URL.format(user_id=user_id))
     return builder.as_markup()
