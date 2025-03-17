@@ -2,6 +2,7 @@ from typing import Literal
 
 from pydantic import (
     PostgresDsn,
+    RedisDsn,
     computed_field,
 )
 from pydantic_settings import (
@@ -46,6 +47,25 @@ class Settings(BaseSettings):
 
     ARTICLE_URL: str
     CHANNEL_URL: str
+
+    USE_REDIS: bool
+    REDIS_USER: str
+    REDIS_PASSWORD: str
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: str
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def REDIS_URI(self) -> RedisDsn:
+        return RedisDsn.build(
+            scheme="redis",
+            username=self.REDIS_USER,
+            password=self.REDIS_PASSWORD,
+            host=self.REDIS_HOST,
+            port=self.REDIS_PORT,
+            path=self.REDIS_DB,
+        )
 
     @classmethod
     def settings_customise_sources(

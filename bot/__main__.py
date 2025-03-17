@@ -1,40 +1,32 @@
 from collections.abc import AsyncGenerator
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram import Dispatcher
 from aiogram.filters import CommandStart, ExceptionTypeFilter
+from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from aiohttp import web
 from aiohttp.web_app import Application
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.core.config import settings
 from bot.db.session import setup_db_session
 from bot.dialogs import include_dialogs, start
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
-from bot.utils import logging
-
-if TYPE_CHECKING:
-    from logging import Logger
+from bot.init import bot, log, scheduler
 
 
 async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
     dispatcher: Dispatcher = app["main_dp"]
-    bot: Bot = app["bot"]
-    log: Logger = dispatcher["log"]
 
     # Создание Engine для db
     db_session = setup_db_session()
     dispatcher["db_session"] = db_session
 
-    scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
     scheduler.start()
-
     dispatcher["scheduler"] = scheduler
 
     if settings.ENVIRONMENT != "production":
@@ -55,6 +47,12 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
 
     yield
 
+    # log.info("Removing webhook")
+    # await bot.delete_webhook()
+    # log.info("Webhook removed")
+    log.info("Shutting down scheduler")
+    scheduler.shutdown()
+    log.info("Scheduler shutdown")
     log.info("Stopping bot")
     # Close aiohttp session
     await bot.session.close()
@@ -62,15 +60,14 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
 
 
 def main() -> None:
-    logger = logging.setup_logger()
-    session = AiohttpSession()
-    bot = Bot(
-        token=settings.BOT_TOKEN,
-        session=session,
-        default=DefaultBotProperties(parse_mode="HTML"),
-    )
-    storage = MemoryStorage()
-    main_bot_dispatcher = Dispatcher(storage=storage, log=logger)
+    if settings.USE_REDIS:
+        storage = RedisStorage.from_url(
+            settings.REDIS_URI.unicode_string(), key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True)
+        )
+    else:
+        storage = MemoryStorage()  # type: ignore[assignment]
+
+    main_bot_dispatcher = Dispatcher(storage=storage, log=log)
     main_bot_dispatcher.message.register(start.bot_start, CommandStart())
     # dp.errors.register(error_handler.errors_handler)
     main_bot_dispatcher.errors.register(
@@ -87,7 +84,6 @@ def main() -> None:
     app = web.Application()
     # Не получается - Data Sharing aka No Singletons Please
     # https://docs.aiohttp.org/en/stable/web_advanced.html#data-sharing-aka-no-singletons-please
-    app["bot"] = bot
     app["main_dp"] = main_bot_dispatcher
     app.cleanup_ctx.append(lifespan)
     SimpleRequestHandler(dispatcher=main_bot_dispatcher, bot=bot).register(app, path=settings.MAIN_BOT_PATH)
