@@ -21,3 +21,4 @@ class QuestioningMenu(StatesGroup):
     select_17_menu = State()
     select_18_menu = State()
     select_19_menu = State()
+    select_last_menu = State()
