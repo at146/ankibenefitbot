@@ -12,7 +12,7 @@ services:
     volumes:
       - app-db-data:/var/lib/postgresql/data/pgdata
     ports:
-      - "127.0.0.1:5400:5400"
+      - "127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - default
     env_file:
@@ -25,25 +25,44 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT?Variable not set}
     command: -p ${POSTGRES_PORT}
 
-  prestart:
-    build:
-      context: .
-    networks:
-      - default
-    depends_on:
-      db:
-        condition: service_healthy
-        restart: true
-    command: bash scripts/prestart.sh
-    env_file:
-      - .env
+  redis:
+    image: redis:latest
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "${REDIS_PORT}", "--raw", "incr", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:${REDIS_PORT}"
+    expose:
+      - "${REDIS_PORT}"
+    volumes:
+      - redis-data:/data
     environment:
-      - ENVIRONMENT=${ENVIRONMENT}
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USERNAME=${POSTGRES_USERNAME?Variable not set}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - REDIS_PORT=${REDIS_PORT?Variable not set}
+    command: --port ${REDIS_PORT}
+
+  # prestart:
+  #   build:
+  #     context: .
+  #   networks:
+  #     - default
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #       restart: true
+  #   command: bash scripts/prestart.sh
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - ENVIRONMENT=${ENVIRONMENT}
+  #     - POSTGRES_HOST=db
+  #     - POSTGRES_PORT=${POSTGRES_PORT}
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #     - POSTGRES_USERNAME=${POSTGRES_USERNAME?Variable not set}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
 
   # bot:
   #   image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
@@ -55,3 +74,4 @@ services:
 
 volumes:
   app-db-data:
+  redis-data:
