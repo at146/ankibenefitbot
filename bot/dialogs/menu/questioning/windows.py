@@ -9,46 +9,12 @@ from .states import QuestioningMenu
 from .text import DICT_QUESTIONS
 
 
-def choose_state(number_question: str) -> State:  # noqa: C901
-    if number_question == "1":
-        return QuestioningMenu.select_1_menu
-    if number_question == "2":
-        return QuestioningMenu.select_2_menu
-    if number_question == "3":
-        return QuestioningMenu.select_3_menu
-    if number_question == "4":
-        return QuestioningMenu.select_4_menu
-    if number_question == "5":
-        return QuestioningMenu.select_5_menu
-    if number_question == "6":
-        return QuestioningMenu.select_6_menu
-    if number_question == "7":
-        return QuestioningMenu.select_7_menu
-    if number_question == "8":
-        return QuestioningMenu.select_8_menu
-    if number_question == "9":
-        return QuestioningMenu.select_9_menu
-    if number_question == "10":
-        return QuestioningMenu.select_10_menu
-    if number_question == "11":
-        return QuestioningMenu.select_11_menu
-    if number_question == "12":
-        return QuestioningMenu.select_12_menu
-    if number_question == "13":
-        return QuestioningMenu.select_13_menu
-    if number_question == "14":
-        return QuestioningMenu.select_14_menu
-    if number_question == "15":
-        return QuestioningMenu.select_15_menu
-    if number_question == "16":
-        return QuestioningMenu.select_16_menu
-    if number_question == "17":
-        return QuestioningMenu.select_17_menu
-    if number_question == "18":
-        return QuestioningMenu.select_18_menu
-    if number_question == "19":
-        return QuestioningMenu.select_19_menu
-    raise ValueError(f"Unknown number question: {number_question}")
+def choose_state(number_question: str) -> State:
+    state_name = f"select_{number_question}_menu"
+    state = getattr(QuestioningMenu, state_name, None)
+    if state is None:
+        raise ValueError(f"Unknown number question: {number_question}")
+    return state  # type: ignore[no-any-return]
 
 
 def generate_menu() -> list[Window]:
