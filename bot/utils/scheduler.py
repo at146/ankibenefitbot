@@ -9,8 +9,8 @@ def setup_scheduler() -> AsyncIOScheduler:
         db=int(settings.REDIS_DB),
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
-        # password="",
-        # username="",
+        password=settings.REDIS_PASSWORD,
+        username=settings.REDIS_USER,
         socket_timeout=5,
     )
 
