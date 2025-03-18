@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from datetime import datetime  # noqa: TC003
+
 from sqlalchemy import BIGINT, ForeignKey, MetaData, text
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -26,6 +29,11 @@ class User(Base):
     username: Mapped[str | None]
     is_clicked_channel: Mapped[bool] = mapped_column(server_default=text("false"))
     is_clicked_article: Mapped[bool] = mapped_column(server_default=text("false"))
+    create_datetime: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    answers_questions: Mapped[list[AnswerQuestions]] = relationship(back_populates="user", lazy="noload")
 
 
 class AnswerQuestions(Base):
@@ -34,3 +42,5 @@ class AnswerQuestions(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     results: Mapped[str]
+
+    user: Mapped[User] = relationship(back_populates="answers_questions", lazy="noload")

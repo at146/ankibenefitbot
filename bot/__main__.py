@@ -11,7 +11,9 @@ from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from aiohttp import web
 from aiohttp.web_app import Application
+from apscheduler.triggers.interval import IntervalTrigger
 
+from bot.api.google_sheets.anki_sheet import AnkiSheet
 from bot.core.config import settings
 from bot.db.session import db_session
 from bot.dialogs import include_dialogs, start
@@ -24,6 +26,16 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
 
     # Создание Engine для db
     dispatcher["db_session"] = db_session
+
+    anki_sheet = AnkiSheet(path_credits=settings.GOOGLE_PATH_CREDITS)
+    await anki_sheet.init_table()
+    scheduler.add_job(
+        anki_sheet.update_table,
+        trigger=IntervalTrigger(minutes=settings.GOOGLE_SHEET_MINUTE_CHECK_TABLE, timezone="Europe/Moscow"),
+        name="change_google_table",
+        id="change_google_table",
+        replace_existing=True,
+    )
 
     scheduler.start()
     dispatcher["scheduler"] = scheduler

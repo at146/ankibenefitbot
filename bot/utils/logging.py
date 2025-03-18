@@ -67,6 +67,7 @@ def setup_logger() -> logging.Logger:
         LOGGER_CONFIG["loggers"]["aiogram_dialog"]["level"] = "INFO"  # type: ignore
         LOGGER_CONFIG["loggers"]["asyncio"]["level"] = "INFO"  # type: ignore
         LOGGER_CONFIG["loggers"]["apscheduler"]["level"] = "INFO"  # type: ignore
+        LOGGER_CONFIG["loggers"]["urllib3"]["level"] = "INFO"  # type: ignore
 
     if not os.path.exists("logs"):
         os.mkdir("logs")

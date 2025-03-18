@@ -67,6 +67,10 @@ class Settings(BaseSettings):
             path=self.REDIS_DB,
         )
 
+    GOOGLE_SHEET_TABLE_ID: str
+    GOOGLE_PATH_CREDITS: str
+    GOOGLE_SHEET_MINUTE_CHECK_TABLE: int
+
     @classmethod
     def settings_customise_sources(
         cls,
