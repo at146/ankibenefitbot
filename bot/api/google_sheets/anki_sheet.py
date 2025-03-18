@@ -112,10 +112,11 @@ class AnkiSheet:
                 result_cell.append(cell)
             row = row + 1
 
-        gs = gspread.auth.service_account(self.path_credits)
-        table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
-        worksheet_1 = table.worksheet("Лист1")
-        worksheet_1.update_cells(result_cell)
+        if result_cell:
+            gs = gspread.auth.service_account(self.path_credits)
+            table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
+            worksheet_1 = table.worksheet("Лист1")
+            worksheet_1.update_cells(result_cell)
 
     async def _update_worksheet_2(self) -> None:
         users = await get_users(db_session)
@@ -136,7 +137,8 @@ class AnkiSheet:
             ]
             row = row + 1
 
-        gs = gspread.auth.service_account(self.path_credits)
-        table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
-        worksheet_2 = table.worksheet("Лист2")
-        worksheet_2.update_cells(result_cell)
+        if result_cell:
+            gs = gspread.auth.service_account(self.path_credits)
+            table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
+            worksheet_2 = table.worksheet("Лист2")
+            worksheet_2.update_cells(result_cell)
