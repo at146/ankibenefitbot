@@ -40,7 +40,7 @@ class AnkiSheet:
 
         # вероятность очень мала))
         random_str = uuid.uuid4().hex
-        self.worksheet_1 = self.table.add_worksheet(random_str, rows=1, cols=1, index=0)
+        self.worksheet_1 = self.table.add_worksheet(random_str, rows=0, cols=0, index=0)
 
         worksheets = self.table.worksheets()
         for ws in worksheets:
@@ -49,7 +49,7 @@ class AnkiSheet:
 
         self.worksheet_1.update_title("Лист1")
 
-        self.worksheet_2 = self.table.add_worksheet("Лист2", rows=1, cols=1, index=1)
+        self.worksheet_2 = self.table.add_worksheet("Лист2", rows=0, cols=0, index=1)
 
         row = 2
         for answers_user in answers_users:
