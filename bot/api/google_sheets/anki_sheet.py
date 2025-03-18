@@ -1,4 +1,5 @@
 import json
+import uuid
 
 import gspread
 
@@ -18,6 +19,7 @@ class AnkiSheet:
         self.table = self.gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
 
     async def init_table(self) -> None:
+        # TODO: batch_format, format
         await self._init_worksheet_1()
         await self._init_worksheet_2()
 
@@ -36,25 +38,18 @@ class AnkiSheet:
 
         answers_users = await get_results(db_session)
 
-        # количество пройденных опросов
-        count_row = len(answers_users)
-        count_col = len(header_list)
-
-        try:
-            self.worksheet_1 = self.table.add_worksheet("Лист1", rows=count_row + 1, cols=count_col, index=0)
-        except gspread.exceptions.APIError:
-            self.worksheet_1 = self.table.worksheet("Лист1")
+        # вероятность очень мала))
+        random_str = uuid.uuid4().hex
+        self.worksheet_1 = self.table.add_worksheet(random_str, rows=1, cols=1, index=0)
 
         worksheets = self.table.worksheets()
-
         for ws in worksheets:
             if ws.index != 0:
                 self.table.del_worksheet(ws)
 
-        try:
-            self.worksheet_2 = self.table.add_worksheet("Лист2", rows=1, cols=1, index=1)
-        except gspread.exceptions.APIError:
-            self.worksheet_2 = self.table.worksheet("Лист2")
+        self.worksheet_1.update_title("Лист1")
+
+        self.worksheet_2 = self.table.add_worksheet("Лист2", rows=1, cols=1, index=1)
 
         row = 2
         for answers_user in answers_users:
