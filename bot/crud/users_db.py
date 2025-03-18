@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -26,3 +28,12 @@ async def insert_user(
         session.add(user)
         await session.commit()
         return user
+
+
+async def get_users(
+    db_session: async_sessionmaker[AsyncSession],
+) -> Sequence[User]:
+    async with db_session() as session:
+        sql = select(User)
+        execute = await session.scalars(sql)
+        return execute.all()

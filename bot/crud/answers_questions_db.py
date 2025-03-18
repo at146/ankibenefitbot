@@ -1,5 +1,8 @@
-from sqlalchemy import update
+from collections.abc import Sequence
+
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.orm import contains_eager
 
 from bot.db.models import AnswerQuestions
 
@@ -32,3 +35,12 @@ async def update_answer_questions(
         )
         await session.execute(sql)
         await session.commit()
+
+
+async def get_results(
+    db_session: async_sessionmaker[AsyncSession],
+) -> Sequence[AnswerQuestions]:
+    async with db_session() as session:
+        sql = select(AnswerQuestions).join(AnswerQuestions.user).options(contains_eager(AnswerQuestions.user))
+        execute = await session.scalars(sql)
+        return execute.unique().all()

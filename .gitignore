@@ -11,3 +11,4 @@ wheels/
 
 .env
 logs
+credits_google_sheets_api.json
