@@ -52,6 +52,9 @@ LOGGER_CONFIG = {
         "tzlocal": {
             "level": "INFO",
         },
+        "urllib3": {
+            "level": "INFO",
+        },
         "": {
             "handlers": ["file", "error_file", "console"],
             "level": "DEBUG",
