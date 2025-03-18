@@ -44,7 +44,14 @@ COPY --from=builder /app/ /app/
 # ENV PYTHONPATH=/app
 # Place executables in the environment at the front of the path
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
-ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONUNBUFFERED=1
+# python
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    # prevents python creating .pyc files
+    #PYTHONDONTWRITEBYTECODE=1 \
+    \
+    # timezone
+    TZ=Europe/Moscow
+
 
 CMD ["python", "-m", "bot"]

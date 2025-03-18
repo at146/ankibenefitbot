@@ -16,7 +16,7 @@ async def on_start(
     manager: DialogManager,
 ) -> None:
     # TODO: для локальной разработки меньше поставить тригер
-    trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(minutes=5))
+    trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(minutes=5), timezone="Europe/Moscow")
     scheduler.add_job(
         change_message_after_5_minutes,
         trigger=trigger,
@@ -42,7 +42,7 @@ async def change_message_after_5_minutes(chat_id: int, message_id: int, first_na
             reply_markup=article_kb(chat_id, "Получить статью сейчас"),
         )
         # TODO: для локальной разработки меньше поставить тригер
-        trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(hours=23))
+        trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(hours=23), timezone="Europe/Moscow")
         scheduler.add_job(
             change_message_after_23_hours,
             trigger=trigger,
