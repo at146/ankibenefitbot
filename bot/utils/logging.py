@@ -58,6 +58,9 @@ LOGGER_CONFIG = {
         "google": {
             "level": "INFO",
         },
+        "aiohttp": {
+            "level": "INFO",
+        },
         "": {
             "handlers": ["file", "error_file", "console"],
             "level": "DEBUG",
@@ -75,6 +78,7 @@ def setup_logger() -> logging.Logger:
         LOGGER_CONFIG["loggers"]["apscheduler"]["level"] = "INFO"  # type: ignore
         LOGGER_CONFIG["loggers"]["urllib3"]["level"] = "INFO"  # type: ignore
         LOGGER_CONFIG["loggers"]["google"]["level"] = "INFO"  # type: ignore
+        LOGGER_CONFIG["loggers"]["aiohttp"]["level"] = "WARNING"  # type: ignore
 
     if not os.path.exists("logs"):
         os.mkdir("logs")
