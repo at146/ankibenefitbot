@@ -21,6 +21,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-dev
 
+COPY ./credits_google_sheets_api.json /app/
+
 COPY ./.env /app/
 
 COPY ./pyproject.toml ./uv.lock /app/
