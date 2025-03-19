@@ -128,7 +128,7 @@ wheels = [
 
 [[package]]
 name = "ankibenefitbot"
-version = "1.7.0"
+version = "1.8.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiogram" },
