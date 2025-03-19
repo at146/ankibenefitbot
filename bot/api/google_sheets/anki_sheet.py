@@ -18,7 +18,9 @@ class AnkiSheet:
         # подключаем таблицу по ID
         self.table = self.gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
         self.header_worksheet_1 = self._get_header_worksheet_1()
+        self.last_header_a1_worksheet_1 = gspread.utils.rowcol_to_a1(1, len(self.header_worksheet_1))
         self.header_worksheet_2 = self._get_header_worksheet_2()
+        self.last_header_a1_worksheet_2 = gspread.utils.rowcol_to_a1(1, len(self.header_worksheet_2))
 
     async def init_table(self) -> None:
         # TODO: batch_format, format
@@ -39,6 +41,7 @@ class AnkiSheet:
         answers_users = await get_results(db_session)
         result_cell: list[gspread.Cell] = []
 
+        # headers
         for col, header in enumerate(self.header_worksheet_1, 1):
             cell = gspread.Cell(row=1, col=col, value=header)
             result_cell.append(cell)
@@ -69,7 +72,9 @@ class AnkiSheet:
                 result_cell.append(cell)
             row = row + 1
 
+        # rect1 = gspread.utils.cell_list_to_rect(result_cell)
         self.worksheet_1.update_cells(result_cell)
+        self.worksheet_1.format([f"A1:{self.last_header_a1_worksheet_1}"], {"textFormat": {"bold": True}})
 
     async def _init_worksheet_2(self) -> None:
         users = await get_users(db_session)
@@ -90,6 +95,7 @@ class AnkiSheet:
             row = row + 1
 
         self.worksheet_2.update_cells(result_cell)
+        self.worksheet_2.format([f"A1:{self.last_header_a1_worksheet_2}"], {"textFormat": {"bold": True}})
 
     async def update_table(self) -> None:
         try:
@@ -125,6 +131,7 @@ class AnkiSheet:
             table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
             worksheet_1 = table.worksheet("Лист1")
             worksheet_1.update_cells(result_cell)
+            worksheet_1.format([f"A1:{self.last_header_a1_worksheet_1}"], {"textFormat": {"bold": True}})
 
     async def _update_worksheet_2(self) -> None:
         users = await get_users(db_session)
@@ -148,3 +155,4 @@ class AnkiSheet:
             table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
             worksheet_2 = table.worksheet("Лист2")
             worksheet_2.update_cells(result_cell)
+            worksheet_2.format([f"A1:{self.last_header_a1_worksheet_2}"], {"textFormat": {"bold": True}})
