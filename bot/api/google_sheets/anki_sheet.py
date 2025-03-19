@@ -25,14 +25,14 @@ class AnkiSheet:
         await self._init_worksheet_1()
         await self._init_worksheet_2()
 
-    def _get_header_worksheet_1(self):
+    def _get_header_worksheet_1(self) -> list[str]:
         header_list = ["Ник ТГ", "Дата и Время входа"]
         for value in DICT_QUESTIONS.values():
             header_list.append(value["question"])  # type: ignore
         header_list.append(LAST_QUESTION["question"])  # type: ignore
         return header_list
 
-    def _get_header_worksheet_2(self):
+    def _get_header_worksheet_2(self) -> list[str]:
         return ["Ник ТГ", "Дата и Время входа", "Забрал статью", "Перешел в канал"]
 
     async def _init_worksheet_1(self) -> None:
