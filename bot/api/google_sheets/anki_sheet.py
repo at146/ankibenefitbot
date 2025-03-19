@@ -87,7 +87,7 @@ class AnkiSheet:
         row = 2
         for user in users:
             result_cell = result_cell + [
-                gspread.Cell(row, col=1, value=user.username or ""),
+                gspread.Cell(row, col=1, value=user.username or user.first_name),
                 gspread.Cell(row, col=2, value=user.create_datetime.strftime("%d/%m/%Y, %H:%M:%S")),
                 gspread.Cell(row, col=3, value="Да" if user.is_clicked_article else "Нет"),
                 gspread.Cell(row, col=4, value="Да" if user.is_clicked_channel else "Нет"),
