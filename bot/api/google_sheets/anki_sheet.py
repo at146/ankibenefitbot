@@ -64,7 +64,13 @@ class AnkiSheet:
             json_acceptable_string = answers_user.results.replace("'", '"')
             dict_value: dict[str, str] = json.loads(json_acceptable_string)
             result_cell = result_cell + [
-                gspread.Cell(row, col=1, value=f"@{answers_user.user.username}" or answers_user.user.first_name),
+                gspread.Cell(
+                    row,
+                    col=1,
+                    value=f"@{answers_user.user.username}"
+                    if answers_user.user.username
+                    else answers_user.user.first_name,
+                ),
                 gspread.Cell(row, col=2, value=answers_user.user.create_datetime.strftime("%d/%m/%Y, %H:%M:%S")),
             ]
             for col, answer in enumerate(dict_value.values(), 3):
@@ -87,7 +93,7 @@ class AnkiSheet:
         row = 2
         for user in users:
             result_cell = result_cell + [
-                gspread.Cell(row, col=1, value=f"@{user.username}" or user.first_name),
+                gspread.Cell(row, col=1, value=f"@{user.username}" if user.username else user.first_name),
                 gspread.Cell(row, col=2, value=user.create_datetime.strftime("%d/%m/%Y, %H:%M:%S")),
                 gspread.Cell(row, col=3, value="Да" if user.is_clicked_article else "Нет"),
                 gspread.Cell(row, col=4, value="Да" if user.is_clicked_channel else "Нет"),
@@ -117,7 +123,13 @@ class AnkiSheet:
             dict_value: dict[str, str] = json.loads(json_acceptable_string)
 
             result_cell = result_cell + [
-                gspread.Cell(row, col=1, value=f"@{answers_user.user.username}" or answers_user.user.first_name),
+                gspread.Cell(
+                    row,
+                    col=1,
+                    value=f"@{answers_user.user.username}"
+                    if answers_user.user.username
+                    else answers_user.user.first_name,
+                ),
                 gspread.Cell(row, col=2, value=answers_user.user.create_datetime.strftime("%d/%m/%Y, %H:%M:%S")),
             ]
 
@@ -143,7 +155,7 @@ class AnkiSheet:
         row = 2
         for user in users:
             result_cell = result_cell + [
-                gspread.Cell(row, col=1, value=f"@{user.username}" or user.first_name),
+                gspread.Cell(row, col=1, value=f"@{user.username}" if user.username else user.first_name),
                 gspread.Cell(row, col=2, value=user.create_datetime.strftime("%d/%m/%Y, %H:%M:%S")),
                 gspread.Cell(row, col=3, value="Да" if user.is_clicked_article else "Нет"),
                 gspread.Cell(row, col=4, value="Да" if user.is_clicked_channel else "Нет"),
