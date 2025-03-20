@@ -39,8 +39,8 @@ async def change_message_after_5_minutes(chat_id: int, message_id: int, first_na
         await bot.delete_message(chat_id=chat_id, message_id=message_id)
         last_message = await bot.send_message(
             chat_id=chat_id,
-            text=get_after_5_minutes_text(first_name),
-            reply_markup=article_kb(chat_id, "Получить статью сейчас"),
+            text=get_after_5_minutes_text(),
+            reply_markup=article_kb(chat_id, "Читать статью"),
         )
         # TODO: для локальной разработки меньше поставить тригер
         trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(hours=23), timezone="Europe/Moscow")
