@@ -35,7 +35,7 @@ class AnkiSheet:
                 self.table.del_worksheet(ws)
         self.worksheet_1.update_title("Лист1")
         self.worksheet_2 = self.table.add_worksheet("Лист2", rows=0, cols=0, index=1)
-        self.worksheet_3 = self.table.add_worksheet("Лист3", rows=0, cols=0, index=1)
+        self.worksheet_3 = self.table.add_worksheet("Лист3", rows=0, cols=0, index=2)
         await self._init_worksheet_1()
         await self._init_worksheet_2()
         await self._init_worksheet_3()
