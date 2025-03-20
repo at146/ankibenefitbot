@@ -44,3 +44,15 @@ class AnswerQuestions(Base):
     results: Mapped[str]
 
     user: Mapped[User] = relationship(back_populates="answers_questions", lazy="noload")
+
+
+class UserChannel(Base):
+    __tablename__ = "users_channel"
+
+    user_id: Mapped[int] = mapped_column(BIGINT, nullable=False, unique=True, primary_key=True)
+    first_name: Mapped[str]
+    last_name: Mapped[str | None]
+    username: Mapped[str | None]
+    create_datetime: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )

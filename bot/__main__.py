@@ -1,7 +1,8 @@
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from aiogram import Dispatcher
+from aiogram import Dispatcher, F
+from aiogram.enums import ChatType
 from aiogram.filters import CommandStart, ExceptionTypeFilter
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -16,7 +17,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from bot.api.google_sheets.anki_sheet import AnkiSheet
 from bot.core.config import settings
 from bot.db.session import db_session
-from bot.dialogs import include_dialogs, start
+from bot.dialogs import chat_join_request, include_dialogs, start
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
 from bot.init import bot, log, scheduler
 
@@ -45,9 +46,12 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
 
     main_bot_url = f"{settings.MAIN_WEBHOOK_ADDRESS}{settings.MAIN_BOT_PATH}"
     url_main = main_bot_url.format(bot_token=settings.BOT_TOKEN)
+    used_update_types = dispatcher.resolve_used_update_types()
+    log.info("Used update types: %s", used_update_types)
+    log.info("Configuring webhook")
     await bot.set_webhook(
         url=url_main,
-        allowed_updates=dispatcher.resolve_used_update_types(),
+        allowed_updates=used_update_types,
         secret_token=settings.MAIN_WEBHOOK_SECRET_TOKEN,
     )
     log.info("Set webhook main - %s", url_main)
@@ -79,7 +83,8 @@ def main() -> None:
         storage = MemoryStorage()  # type: ignore[assignment]
 
     main_bot_dispatcher = Dispatcher(storage=storage, log=log)
-    main_bot_dispatcher.message.register(start.bot_start, CommandStart())
+    main_bot_dispatcher.message.register(start.bot_start, CommandStart(), F.chat.type.is_(ChatType.PRIVATE))
+    main_bot_dispatcher.chat_join_request.register(chat_join_request.bot_chat_join_request)
     # dp.errors.register(error_handler.errors_handler)
     main_bot_dispatcher.errors.register(
         on_unknown_intent,
