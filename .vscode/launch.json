@@ -6,7 +6,11 @@
             "type": "debugpy",
             "request": "launch",
             "module": "bot",
-            "justMyCode": false
+            "justMyCode": false,
+            "variablePresentation": {
+                "function": "hide",
+                "special": "hide"
+            }
         }
     ]
 }
