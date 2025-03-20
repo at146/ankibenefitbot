@@ -81,6 +81,10 @@ class AnkiSheet:
         # rect1 = gspread.utils.cell_list_to_rect(result_cell)
         self.worksheet_1.update_cells(result_cell)
         self.worksheet_1.format([f"A1:{self.last_header_a1_worksheet_1}"], {"textFormat": {"bold": True}})
+        self.worksheet_1.format(
+            [f"A1:{gspread.utils.rowcol_to_a1(result_cell[-1].row, result_cell[-1].col)}"],
+            {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
+        )
 
     async def _init_worksheet_2(self) -> None:
         users = await get_users(db_session)
@@ -102,6 +106,10 @@ class AnkiSheet:
 
         self.worksheet_2.update_cells(result_cell)
         self.worksheet_2.format([f"A1:{self.last_header_a1_worksheet_2}"], {"textFormat": {"bold": True}})
+        self.worksheet_2.format(
+            [f"A1:{gspread.utils.rowcol_to_a1(result_cell[-1].row, result_cell[-1].col)}"],
+            {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
+        )
 
     async def update_table(self) -> None:
         try:
@@ -144,6 +152,10 @@ class AnkiSheet:
             worksheet_1 = table.worksheet("Лист1")
             worksheet_1.update_cells(result_cell)
             worksheet_1.format([f"A1:{self.last_header_a1_worksheet_1}"], {"textFormat": {"bold": True}})
+            worksheet_1.format(
+                [f"A1:{gspread.utils.rowcol_to_a1(result_cell[-1].row, result_cell[-1].col)}"],
+                {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
+            )
 
     async def _update_worksheet_2(self) -> None:
         users = await get_users(db_session)
@@ -168,3 +180,7 @@ class AnkiSheet:
             worksheet_2 = table.worksheet("Лист2")
             worksheet_2.update_cells(result_cell)
             worksheet_2.format([f"A1:{self.last_header_a1_worksheet_2}"], {"textFormat": {"bold": True}})
+            worksheet_2.format(
+                [f"A1:{gspread.utils.rowcol_to_a1(result_cell[-1].row, result_cell[-1].col)}"],
+                {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
+            )
