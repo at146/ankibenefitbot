@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.orm import contains_eager
 
-from bot.db.models import AnswerQuestions
+from bot.db.models import AnswerQuestions, User
 
 
 async def insert_answer_questions(
@@ -41,6 +41,11 @@ async def get_results(
     db_session: async_sessionmaker[AsyncSession],
 ) -> Sequence[AnswerQuestions]:
     async with db_session() as session:
-        sql = select(AnswerQuestions).join(AnswerQuestions.user).options(contains_eager(AnswerQuestions.user))
+        sql = (
+            select(AnswerQuestions)
+            .join(AnswerQuestions.user)
+            .options(contains_eager(AnswerQuestions.user))
+            .order_by(User.create_datetime)
+        )
         execute = await session.scalars(sql)
         return execute.unique().all()
