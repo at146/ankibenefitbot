@@ -124,7 +124,7 @@ class AnkiSheet:
             {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
         )
 
-    async def _init_worksheet_3(self):
+    async def _init_worksheet_3(self) -> None:
         users_channel = await users_channel_db.get_users_channel(db_session)
         result_cell: list[gspread.Cell] = []
 
