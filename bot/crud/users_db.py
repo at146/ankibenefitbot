@@ -34,6 +34,6 @@ async def get_users(
     db_session: async_sessionmaker[AsyncSession],
 ) -> Sequence[User]:
     async with db_session() as session:
-        sql = select(User)
+        sql = select(User).order_by(User.create_datetime)
         execute = await session.scalars(sql)
         return execute.all()
