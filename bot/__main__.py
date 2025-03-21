@@ -1,8 +1,7 @@
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from aiogram import Dispatcher, F
-from aiogram.enums import ChatType
+from aiogram import Dispatcher
 from aiogram.filters import CommandStart, ExceptionTypeFilter
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -83,7 +82,7 @@ def main() -> None:
         storage = MemoryStorage()  # type: ignore[assignment]
 
     main_bot_dispatcher = Dispatcher(storage=storage, log=log)
-    main_bot_dispatcher.message.register(start.bot_start, CommandStart(), F.chat.type.is_(ChatType.PRIVATE))
+    main_bot_dispatcher.message.register(start.bot_start, CommandStart())
     main_bot_dispatcher.chat_join_request.register(chat_join_request.bot_chat_join_request)
     # dp.errors.register(error_handler.errors_handler)
     main_bot_dispatcher.errors.register(
