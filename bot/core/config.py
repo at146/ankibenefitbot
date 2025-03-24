@@ -70,6 +70,8 @@ class Settings(BaseSettings):
     GOOGLE_SHEET_TABLE_ID: str
     GOOGLE_PATH_CREDITS: str
     GOOGLE_SHEET_MINUTE_CHECK_TABLE: int
+    # Если добавляются в этот канал, то добавляется в базу
+    GOOGLE_SHEET_TELEGRAM_CHANNEL_ID: int
 
     @classmethod
     def settings_customise_sources(
