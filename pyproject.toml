@@ -33,7 +33,7 @@ package = false
 line-length = 120
 fix = true
 target-version = "py312"
-exclude = [ "bot/dialogs/menu/main/text.py", "bot/dialogs/menu/questioning/text.py", "bot/dialogs/menu/result_questioning/text.py" ]
+exclude = [ "bot/dialogs/**/text.py" ]
 
 [tool.ruff.lint]
 select = [
