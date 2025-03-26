@@ -1,18 +1,19 @@
-from aiogram.types import ContentType
 from aiogram_dialog import Window
-from aiogram_dialog.widgets.media import StaticMedia
+from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const
 
-from .callbacks import start_questioning_clicked
-from .keyboards import main_kb
+from .callbacks import start_two_menu_clicked
 from .states import BotMenu
-from .text import START_TEXT
+from .text import MAIN_MENU_TEXT
 
 
 def main_menu() -> Window:
     return Window(
-        Const(START_TEXT),
-        StaticMedia(path="bot/image.png", type=ContentType.PHOTO),
-        main_kb(start_questioning_clicked),
+        Const(MAIN_MENU_TEXT),
+        Button(
+            Const("Забрать статью"),
+            id="go",
+            on_click=start_two_menu_clicked,
+        ),
         state=BotMenu.select_main_menu,
     )

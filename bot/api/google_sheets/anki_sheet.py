@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 import gspread
 
 from bot.core.config import settings
-from bot.crud import answers_questions_db, users_channel_db, users_db
+from bot.crud import answers_questions_db, users_channel_db, users_db, users_lidmagnit_db
 from bot.db.session import db_session
 from bot.dialogs.menu.questioning.text import DICT_QUESTIONS, LAST_QUESTION
 from bot.init import log
@@ -276,3 +276,103 @@ class AnkiSheet:
                 [f"A1:{gspread.utils.rowcol_to_a1(result_cell[-1].row, result_cell[-1].col)}"],
                 {"wrapStrategy": "WRAP", "verticalAlignment": "TOP"},
             )
+
+
+class AnkiSheetWorksheetLidMagnit:
+    def __init__(self, path_credits: str) -> None:
+        self.path_credits = path_credits
+        self.gs = gspread.auth.service_account(self.path_credits)
+        # подключаем таблицу по ID
+        self.table = self.gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
+        self.header_worksheet = ["Ник ТГ", "Дата и Время входа"]
+        self.header_a1_worksheet = f"A1:{gspread.utils.rowcol_to_a1(1, len(self.header_worksheet))}"
+
+    async def _get_users_lidmagnit(self) -> list[list[str]]:
+        users_lidmagnit = await users_lidmagnit_db.get_users_lidmagnit(db_session)
+        result_value = []
+        for user in users_lidmagnit:
+            result_value.append(
+                [
+                    f"@{user.username}" if user.username else user.first_name,
+                    user.create_datetime.astimezone(tz=ZoneInfo("Europe/Moscow")).strftime("%d/%m/%Y, %H:%M:%S"),
+                ]
+            )
+        return result_value
+
+    async def init_worksheet(self) -> None:
+        try:
+            self.worksheet = self.table.worksheet("лидмагнит")
+        except gspread.exceptions.WorksheetNotFound:
+            self.worksheet = self.table.add_worksheet("лидмагнит", rows=0, cols=0)
+
+        result_value = await self._get_users_lidmagnit()
+        value_a1 = f"A2:{gspread.utils.rowcol_to_a1(len(result_value) + 1, len(self.header_worksheet))}"
+        self.worksheet.batch_update(
+            [
+                {
+                    "range": self.header_a1_worksheet,
+                    "values": [self.header_worksheet],
+                },
+                {
+                    "range": value_a1,
+                    "values": result_value,
+                },
+            ]
+        )
+
+        formats: list[gspread.worksheet.CellFormat] = [
+            {
+                "range": self.header_a1_worksheet,
+                "format": {
+                    "textFormat": {
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "range": f"A1:{gspread.utils.rowcol_to_a1(len(result_value) + 1, len(self.header_worksheet))}",
+                "format": {
+                    "wrapStrategy": "WRAP",
+                    "verticalAlignment": "TOP",
+                },
+            },
+        ]
+        self.worksheet.batch_format(formats)
+
+    async def update_worksheet(self) -> None:
+        gs = gspread.auth.service_account(self.path_credits)
+        table = gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
+        worksheet = table.worksheet("лидмагнит")
+
+        result_value = await self._get_users_lidmagnit()
+        value_a1 = f"A2:{gspread.utils.rowcol_to_a1(len(result_value) + 1, len(self.header_worksheet))}"
+        worksheet.batch_update(
+            [
+                {
+                    "range": self.header_a1_worksheet,
+                    "values": [self.header_worksheet],
+                },
+                {
+                    "range": value_a1,
+                    "values": result_value,
+                },
+            ]
+        )
+        formats: list[gspread.worksheet.CellFormat] = [
+            {
+                "range": self.header_a1_worksheet,
+                "format": {
+                    "textFormat": {
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "range": f"A1:{gspread.utils.rowcol_to_a1(len(result_value) + 1, len(self.header_worksheet))}",
+                "format": {
+                    "wrapStrategy": "WRAP",
+                    "verticalAlignment": "TOP",
+                },
+            },
+        ]
+        worksheet.batch_format(formats)
