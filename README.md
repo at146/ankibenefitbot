@@ -5,10 +5,6 @@
 
 Dev:
 
-```bash
-docker run -it --rm -p 127.0.0.1:5400:5400 --env-file .env postgres:17 -p 5400
-```
-
 alembic revision --autogenerate -m "init"
 
 alembic upgrade head
