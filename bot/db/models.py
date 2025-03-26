@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime  # noqa: TC003
 
-from sqlalchemy import BIGINT, ForeignKey, MetaData, text
+from sqlalchemy import BIGINT, ForeignKey, MetaData, func, text
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -58,3 +58,16 @@ class UserChannel(Base):
     create_datetime: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=text("CURRENT_TIMESTAMP")
     )
+
+
+class UserLidMagnit(Base):
+    __tablename__ = "users_lidmagnit"
+
+    user_id: Mapped[int] = mapped_column(BIGINT, nullable=False, unique=True, primary_key=True)
+    first_name: Mapped[str]
+    last_name: Mapped[str | None]
+    username: Mapped[str | None]
+    is_clicked_channel: Mapped[bool] = mapped_column(server_default=text("false"))
+    is_clicked_article: Mapped[bool] = mapped_column(server_default=text("false"))
+    # TODO: почему то забирает из бд c timezone utc
+    create_datetime: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())

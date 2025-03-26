@@ -13,7 +13,7 @@ from aiohttp import web
 from aiohttp.web_app import Application
 from apscheduler.triggers.interval import IntervalTrigger
 
-from bot.api.google_sheets.anki_sheet import AnkiSheet
+from bot.api.google_sheets.anki_sheet import AnkiSheetWorksheetLidMagnit
 from bot.core.config import settings
 from bot.db.session import db_session
 from bot.dialogs import chat_join_request, include_dialogs, start
@@ -27,10 +27,10 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
     # Создание Engine для db
     dispatcher["db_session"] = db_session
 
-    anki_sheet = AnkiSheet(path_credits=settings.GOOGLE_PATH_CREDITS)
-    await anki_sheet.init_table()
+    anki_sheet = AnkiSheetWorksheetLidMagnit(path_credits=settings.GOOGLE_PATH_CREDITS)
+    await anki_sheet.init_worksheet()
     scheduler.add_job(
-        anki_sheet.update_table,
+        anki_sheet.update_worksheet,
         trigger=IntervalTrigger(minutes=settings.GOOGLE_SHEET_MINUTE_CHECK_TABLE, timezone="Europe/Moscow"),
         name="change_google_table",
         id="change_google_table",
