@@ -3,7 +3,7 @@ default_language_version:
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.6.9
+    rev: 0.6.10
     hooks:
       # Update the uv lockfile
       - id: uv-lock
