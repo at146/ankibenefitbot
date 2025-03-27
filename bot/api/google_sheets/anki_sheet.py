@@ -284,7 +284,7 @@ class AnkiSheetWorksheetLidMagnit:
         self.gs = gspread.auth.service_account(self.path_credits)
         # подключаем таблицу по ID
         self.table = self.gs.open_by_key(settings.GOOGLE_SHEET_TABLE_ID)
-        self.header_worksheet = ["Ник ТГ", "Дата и Время входа"]
+        self.header_worksheet = ["Ник ТГ", "Дата и Время входа", "Забрал статью", "Перешел в канал"]
         self.header_a1_worksheet = f"A1:{gspread.utils.rowcol_to_a1(1, len(self.header_worksheet))}"
 
     async def _get_users_lidmagnit(self) -> list[list[str]]:
@@ -295,6 +295,8 @@ class AnkiSheetWorksheetLidMagnit:
                 [
                     f"@{user.username}" if user.username else user.first_name,
                     user.create_datetime.astimezone(tz=ZoneInfo("Europe/Moscow")).strftime("%d/%m/%Y, %H:%M:%S"),
+                    "Да" if user.is_clicked_article else "Нет",
+                    "Да" if user.is_clicked_channel else "Нет",
                 ]
             )
         return result_value

@@ -73,9 +73,6 @@ class Settings(BaseSettings):
     # Если добавляются в этот канал, то добавляется в базу
     GOOGLE_SHEET_TELEGRAM_CHANNEL_ID: int
 
-    ARTICLE_URL: str
-    CHANNEL_URL: str
-
     @classmethod
     def settings_customise_sources(
         cls,
