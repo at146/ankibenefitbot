@@ -30,6 +30,7 @@ async def on_start(
         trigger=trigger,
         args=[
             event_chat.id,
+            event_from_user.id,
             data["message_id"],
             event_from_user.first_name,
         ],
@@ -37,7 +38,7 @@ async def on_start(
     )
 
 
-async def change_message_after_10_minutes(chat_id: int, message_id: int, first_name: str) -> None:
+async def change_message_after_10_minutes(chat_id: int, user_id: int, message_id: int, first_name: str) -> None:
     # TODO: ДРУГАЯ ТАБЛИЦА
     # user_db = await users_db.get_user_by_user_id(chat_id, db_session)
 
@@ -48,7 +49,7 @@ async def change_message_after_10_minutes(chat_id: int, message_id: int, first_n
     last_message = await bot.send_message(
         chat_id=chat_id,
         text=TEXT_AFTER_10_MIN.format(first_name=first_name),
-        reply_markup=article_kb("Получить статью сейчас"),
+        reply_markup=article_kb(user_id, "Получить статью сейчас"),
     )
     await bot.delete_message(chat_id=chat_id, message_id=message_id)
     if settings.ENVIRONMENT == "production":
@@ -62,13 +63,14 @@ async def change_message_after_10_minutes(chat_id: int, message_id: int, first_n
         trigger=trigger,
         args=[
             last_message.chat.id,
+            user_id,
             last_message.message_id,
         ],
         name="after_2_hours",
     )
 
 
-async def change_message_after_2_hours(chat_id: int, message_id: int) -> None:
+async def change_message_after_2_hours(chat_id: int, user_id: int, message_id: int) -> None:
     # TODO: ДРУГАЯ ТАБЛИЦА
     # user_db = await users_db.get_user_by_user_id(chat_id, db_session)
 
@@ -80,7 +82,7 @@ async def change_message_after_2_hours(chat_id: int, message_id: int) -> None:
         chat_id=chat_id,
         photo=FSInputFile("bot/images/IMG_4575.PNG"),
         caption=TEXT_AFTER_2_HOURS,
-        reply_markup=channel_kb("Подписаться"),
+        reply_markup=channel_kb(user_id, "Подписаться"),
     )
     await bot.delete_message(chat_id=chat_id, message_id=message_id)
     if settings.ENVIRONMENT == "production":
@@ -94,17 +96,18 @@ async def change_message_after_2_hours(chat_id: int, message_id: int) -> None:
         trigger=trigger,
         args=[
             last_message.chat.id,
+            user_id,
             last_message.message_id,
         ],
         name="after_21_hours",
     )
 
 
-async def change_message_after_21_hours(chat_id: int, message_id: int) -> None:
+async def change_message_after_21_hours(chat_id: int, user_id: int, message_id: int) -> None:
     last_message = await bot.send_message(
         chat_id=chat_id,
         text=TEXT_AFTER_21_HOURS,
-        reply_markup=article_kb("Получить статью сейчас"),
+        reply_markup=article_kb(user_id, "Получить статью сейчас"),
     )
     await bot.delete_message(chat_id=chat_id, message_id=message_id)
     if settings.ENVIRONMENT == "production":
