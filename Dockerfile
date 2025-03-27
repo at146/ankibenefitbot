@@ -1,4 +1,4 @@
-FROM python:3.12.8-slim-bookworm AS builder
+FROM python:3.12.9-slim-bookworm AS builder
 
 WORKDIR /app/
 
@@ -37,7 +37,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 
-FROM python:3.12.8-slim-bookworm
+FROM python:3.12.9-slim-bookworm
 
 WORKDIR /app/
 
