@@ -39,13 +39,6 @@ async def on_start(
 
 
 async def change_message_after_10_minutes(chat_id: int, user_id: int, message_id: int, first_name: str) -> None:
-    # TODO: ДРУГАЯ ТАБЛИЦА
-    # user_db = await users_db.get_user_by_user_id(chat_id, db_session)
-
-    # if user_db is None:
-    #     raise ValueError(f"User not found chat_id - {chat_id}")
-
-    # if user_db.is_clicked_article is False:
     last_message = await bot.send_message(
         chat_id=chat_id,
         text=TEXT_AFTER_10_MIN.format(first_name=first_name),
@@ -71,13 +64,6 @@ async def change_message_after_10_minutes(chat_id: int, user_id: int, message_id
 
 
 async def change_message_after_2_hours(chat_id: int, user_id: int, message_id: int) -> None:
-    # TODO: ДРУГАЯ ТАБЛИЦА
-    # user_db = await users_db.get_user_by_user_id(chat_id, db_session)
-
-    # if user_db is None:
-    #     raise ValueError(f"User not found chat_id - {chat_id}")
-
-    # if user_db.is_clicked_article is False:
     last_message = await bot.send_photo(
         chat_id=chat_id,
         photo=FSInputFile("bot/images/IMG_4575.PNG"),
