@@ -16,9 +16,6 @@ async def on_start(
     data: dict[str, str],
     manager: DialogManager,
 ) -> None:
-    # TODO: для локальной разработки меньше поставить тригер
-    trigger = DateTrigger(run_date=datetime.datetime.now() + datetime.timedelta(minutes=5), timezone="Europe/Moscow")
-
     if settings.ENVIRONMENT == "production":
         trigger = DateTrigger(
             run_date=datetime.datetime.now() + datetime.timedelta(minutes=5), timezone="Europe/Moscow"

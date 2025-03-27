@@ -28,7 +28,6 @@ def generate_menu() -> list[Window]:
         else:
             raise ValueError(f"Unknown count of selects: {count_selects}")
 
-        # TODO: Убрать это и возможно разделить переменные вопроса и вариантов ответа
         if not isinstance(value["question"], str):
             raise ValueError(f"Question is not string: {value['question']}")
 

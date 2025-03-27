@@ -69,5 +69,4 @@ class UserLidMagnit(Base):
     username: Mapped[str | None]
     is_clicked_channel: Mapped[bool] = mapped_column(server_default=text("false"))
     is_clicked_article: Mapped[bool] = mapped_column(server_default=text("false"))
-    # TODO: почему то забирает из бд c timezone utc
     create_datetime: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())

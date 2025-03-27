@@ -25,7 +25,6 @@ class AnkiSheet:
         self.last_header_a1_worksheet_3 = gspread.utils.rowcol_to_a1(1, len(self.header_worksheet_3))
 
     async def init_table(self) -> None:
-        # TODO: batch_format, format
         # вероятность очень мала))
         random_str = uuid.uuid4().hex
         self.worksheet_1 = self.table.add_worksheet(random_str, rows=0, cols=0, index=0)
