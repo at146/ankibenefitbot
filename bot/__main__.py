@@ -20,6 +20,7 @@ from bot.db.session import db_session
 from bot.dialogs import include_dialogs
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
 from bot.init import bot, log, scheduler
+from bot.utils.bot_commands import set_bot_commands
 
 
 async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
@@ -43,7 +44,11 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
 
     if settings.ENVIRONMENT != "production":
         log.info("Режим: Debug")
-
+    # TODO: как удалить админа бота
+    if await set_bot_commands(bot):
+        log.info("Set bot commands")
+    else:
+        log.error("Error set bot commands")
     main_bot_url = f"{settings.MAIN_WEBHOOK_ADDRESS}{settings.MAIN_BOT_PATH}"
     url_main = main_bot_url.format(bot_token=settings.BOT_TOKEN)
     used_update_types = dispatcher.resolve_used_update_types()

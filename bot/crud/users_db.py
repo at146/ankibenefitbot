@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from bot.db.models import User
@@ -37,3 +37,9 @@ async def get_users(
         sql = select(User).order_by(User.create_datetime)
         execute = await session.scalars(sql)
         return execute.all()
+
+
+async def get_count(db_session: async_sessionmaker[AsyncSession]) -> int | None:
+    async with db_session() as session:
+        sql = select(func.count(User.user_id))
+        return await session.scalar(sql)  # type: ignore
