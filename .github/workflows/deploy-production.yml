@@ -25,8 +25,8 @@ jobs:
             cd /root/ankibenefitbot;
             git fetch --all;
             git reset --hard origin/main;
-            docker compose -f docker-compose.yml up --build -d --no-deps --force-recreate
-            docker system prune --force
+            docker compose -f docker-compose.yml down --rmi all
+            docker compose -f docker-compose.yml up -d
 
   deploy:
     name: Create Release
