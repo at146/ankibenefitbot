@@ -1,12 +1,14 @@
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import (
     PostgresDsn,
     RedisDsn,
     computed_field,
+    field_validator,
 )
 from pydantic_settings import (
     BaseSettings,
+    NoDecode,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
 )
@@ -72,6 +74,13 @@ class Settings(BaseSettings):
     GOOGLE_SHEET_MINUTE_CHECK_TABLE: int
     # Если добавляются в этот канал, то добавляется в базу
     GOOGLE_SHEET_TELEGRAM_CHANNEL_ID: int
+
+    BOT_ADMINS_IDS: Annotated[list[int], NoDecode]
+
+    @field_validator("BOT_ADMINS_IDS", mode="before")
+    @classmethod
+    def list_bot_admins_ids(cls, v: str) -> list[int]:
+        return [int(x) for x in v.split(",")]
 
     @classmethod
     def settings_customise_sources(

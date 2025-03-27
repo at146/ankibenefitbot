@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlalchemy import insert, select
+from sqlalchemy import func, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from bot.db.models import UserLidMagnit
@@ -36,3 +36,9 @@ async def get_users_lidmagnit(
         sql = select(UserLidMagnit).order_by(UserLidMagnit.create_datetime)
         execute = await session.scalars(sql)
         return execute.all()
+
+
+async def get_count(db_session: async_sessionmaker[AsyncSession]) -> int | None:
+    async with db_session() as session:
+        sql = select(func.count(UserLidMagnit.user_id))
+        return await session.scalar(sql)  # type: ignore
