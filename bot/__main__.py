@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator
 from typing import Any
 
 from aiogram import Dispatcher
-from aiogram.filters import CommandStart, ExceptionTypeFilter
+from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
@@ -13,10 +13,11 @@ from aiohttp import web
 from aiohttp.web_app import Application
 from apscheduler.triggers.interval import IntervalTrigger
 
+from bot import handlers
 from bot.api.google_sheets.anki_sheet import AnkiSheetWorksheetLidMagnit
 from bot.core.config import settings
 from bot.db.session import db_session
-from bot.dialogs import chat_join_request, include_dialogs, start
+from bot.dialogs import include_dialogs
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
 from bot.init import bot, log, scheduler
 
@@ -82,8 +83,7 @@ def main() -> None:
         storage = MemoryStorage()  # type: ignore[assignment]
 
     main_bot_dispatcher = Dispatcher(storage=storage, log=log)
-    main_bot_dispatcher.message.register(start.bot_start, CommandStart())
-    main_bot_dispatcher.chat_join_request.register(chat_join_request.bot_chat_join_request)
+    main_bot_dispatcher.include_router(handlers.prepare_router())
     # dp.errors.register(error_handler.errors_handler)
     main_bot_dispatcher.errors.register(
         on_unknown_intent,
