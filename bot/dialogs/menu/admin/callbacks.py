@@ -36,7 +36,8 @@ async def admin_text_spam(
     users_lidmagnit = await users_lidmagnit_db.get_users_lidmagnit(db_session)
     users = await users_db.get_users(db_session)
     users_ids = [user.user_id for user in users_lidmagnit] + [user.user_id for user in users]
-    len_users = len(users_ids)
+    unique_users_ids = set(users_ids)
+    len_users = len(unique_users_ids)
 
     new_text = f"Дождитесь завершения рассылки!\n\nОтправка [0 из {len_users}]"
     last_message = await message.answer(text=new_text)
@@ -63,7 +64,7 @@ async def admin_text_spam(
     start_spam = datetime.now()
 
     try:
-        for user_id in users_ids:
+        for user_id in unique_users_ids:
             if user_id == event_from_user.id:
                 continue
             # Всего пользователей
