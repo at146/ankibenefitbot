@@ -14,12 +14,13 @@ from aiohttp.web_app import Application
 from apscheduler.triggers.interval import IntervalTrigger
 
 from bot import handlers
-from bot.api.google_sheets.anki_sheet import AnkiSheetWorksheetLidMagnit
+from bot.api.google_sheets.anki_sheet import AnkiSheet
 from bot.core.config import settings
 from bot.db.session import db_session
 from bot.dialogs import include_dialogs
 from bot.dialogs.menu.error import on_unknown_intent, on_unknown_state
 from bot.init import bot, log, scheduler
+from bot.runners import run_polling
 from bot.utils.bot_commands import set_bot_commands
 
 
@@ -29,10 +30,10 @@ async def lifespan(app: Application) -> AsyncGenerator[None, Any]:
     # Создание Engine для db
     dispatcher["db_session"] = db_session
 
-    anki_sheet = AnkiSheetWorksheetLidMagnit(path_credits=settings.GOOGLE_PATH_CREDITS)
-    await anki_sheet.init_worksheet()
+    anki_sheet = AnkiSheet(path_credits=settings.GOOGLE_PATH_CREDITS)
+    await anki_sheet.init_table()
     scheduler.add_job(
-        anki_sheet.update_worksheet,
+        anki_sheet.update_table,
         trigger=IntervalTrigger(minutes=settings.GOOGLE_SHEET_MINUTE_CHECK_TABLE, timezone="Europe/Moscow"),
         name="change_google_table",
         id="change_google_table",
@@ -101,17 +102,21 @@ def main() -> None:
     include_dialogs(main_bot_dispatcher)
     setup_dialogs(main_bot_dispatcher)
 
-    app = web.Application()
-    # Не получается - Data Sharing aka No Singletons Please
-    # https://docs.aiohttp.org/en/stable/web_advanced.html#data-sharing-aka-no-singletons-please
-    app["main_dp"] = main_bot_dispatcher
-    app.cleanup_ctx.append(lifespan)
-    SimpleRequestHandler(dispatcher=main_bot_dispatcher, bot=bot).register(app, path=settings.MAIN_BOT_PATH)
-    web.run_app(
-        app,
-        host=settings.MAIN_WEBHOOK_LISTENING_HOST,
-        port=settings.MAIN_WEBHOOK_LISTENING_PORT,
-    )
+    if settings.USE_WEBHOOK:
+        app = web.Application()
+        # Не получается - Data Sharing aka No Singletons Please
+        # https://docs.aiohttp.org/en/stable/web_advanced.html#data-sharing-aka-no-singletons-please
+        app["main_dp"] = main_bot_dispatcher
+        app.cleanup_ctx.append(lifespan)
+        SimpleRequestHandler(dispatcher=main_bot_dispatcher, bot=bot).register(app, path=settings.MAIN_BOT_PATH)
+        web.run_app(
+            app,
+            host=settings.MAIN_WEBHOOK_LISTENING_HOST,
+            port=settings.MAIN_WEBHOOK_LISTENING_PORT,
+        )
+        # return run_webhook(dispatcher=main_bot_dispatcher, bot=bot, settings=settings)
+    else:
+        run_polling(dispatcher=main_bot_dispatcher, bot=bot, log=log)
 
 
 if __name__ == "__main__":

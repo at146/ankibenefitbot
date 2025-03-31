@@ -13,6 +13,11 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
+# class Telegram(BaseSettings):
+#     RESET_WEBHOOK: bool
+#     USE_WEBHOOK: bool
+#     DROP_PENDING_UPDATES: bool
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -22,6 +27,11 @@ class Settings(BaseSettings):
     # .env
     ENVIRONMENT: Literal["local", "production"] = "local"
     BOT_TOKEN: str
+
+    # TELEGRAM: Telegram
+    USE_WEBHOOK: bool
+    RESET_WEBHOOK: bool
+    DROP_PENDING_UPDATES: bool
 
     MAIN_WEBHOOK_ADDRESS: str
     MAIN_BOT_PATH: str
