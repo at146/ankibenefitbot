@@ -16,7 +16,7 @@ from bot.utils.bot_commands import set_bot_commands
 async def polling_startup(dispatcher: Dispatcher, bot: Bot, log: Logger) -> None:
     dispatcher["db_session"] = db_session
     anki_sheet = AnkiSheet(path_credits=settings.GOOGLE_PATH_CREDITS)
-    # await anki_sheet.init_table()
+    await anki_sheet.init_table()
     scheduler.add_job(
         anki_sheet.update_table,
         trigger=IntervalTrigger(minutes=settings.GOOGLE_SHEET_MINUTE_CHECK_TABLE, timezone="Europe/Moscow"),
@@ -24,7 +24,7 @@ async def polling_startup(dispatcher: Dispatcher, bot: Bot, log: Logger) -> None
         id="change_google_table",
         replace_existing=True,
     )
-    # scheduler.start()
+    scheduler.start()
     dispatcher["scheduler"] = scheduler
     if settings.ENVIRONMENT != "production":
         log.info("Режим: Debug")
