@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # Python
+  - package-ecosystem: "uv"
+    directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: ⬆
+  # Github Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: ⬆
