@@ -18,6 +18,5 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.6.x"
           enable-cache: true
       - run: uv run bash scripts/lint.sh
